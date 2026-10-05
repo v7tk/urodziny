@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17 URODZINY</title>
+<style>
+  :root { --rose:#e85d83; --deep:#a92e57; --cream:#fff8f7; --ink:#56343f; }
+  * { box-sizing:border-box }
+  body {
+    margin:0; min-height:100vh; overflow-x:hidden; color:var(--ink);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: radial-gradient(circle at 15% 15%, #ffe2e9, transparent 35%),
+                radial-gradient(circle at 85% 80%, #ffd9e4, transparent 38%),
+                linear-gradient(135deg,#fff8f7,#fff0f3);
+    display:grid; place-items:center; padding:24px;
+  }
+  .hearts { position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0 }
+  .heart { position:absolute; bottom:-50px; color:#ed9ab0; opacity:.42; animation:floatUp linear infinite }
+  @keyframes floatUp { to { transform:translateY(-115vh) rotate(25deg); opacity:0 } }
+  .shell { width:min(760px,100%); position:relative; z-index:1 }
+  .card {
+    min-height:470px; padding:clamp(26px,6vw,58px); border:1px solid #ffffffc9;
+    border-radius:30px; background:#ffffffd9; box-shadow:0 22px 70px #a92e571c;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; backdrop-filter:blur(12px); animation:appear .45s ease;
+  }
+  @keyframes appear { from { opacity:0; transform:translateY(10px) scale(.99) } to { opacity:1; transform:none } }
+  .eyebrow { color:var(--rose); text-transform:uppercase; letter-spacing:.2em; font-size:.76rem; font-weight:700 }
+  h1 { color:var(--deep); font-family:Georgia,serif; font-size:clamp(2rem,7vw,3.5rem); line-height:1.12; margin:18px 0 }
+  h2 { color:var(--deep); font-family:Georgia,serif; font-size:clamp(1.8rem,6vw,2.7rem); margin:15px 0 }
+  .intro { max-width:480px; line-height:1.7; color:#805b67; font-size:1.05rem }
+  .gift-icon { width:112px; height:112px; display:grid; place-items:center; border-radius:50%; background:#fff0f4; font-size:3.5rem; margin:8px 0 14px; box-shadow:inset 0 0 0 1px #f9d7e1 }
+  .description { max-width:520px; min-height:76px; line-height:1.75; color:#805b67; font-size:1.05rem; white-space:pre-wrap }
+  .controls { display:flex; align-items:center; justify-content:center; gap:18px; margin-top:26px; flex-wrap:wrap }
+  button { border:0; cursor:pointer; font:inherit; transition:transform .15s, background.15s }
+  button:hover { transform:translateY(-2px) }
+  button:focus-visible { outline:3px solid #b83f68; outline-offset:4px }
+  .primary { padding:14px 24px; border-radius:999px; color:white; background:linear-gradient(135deg,var(--rose),var(--deep)); font-weight:700; box-shadow:0 8px 20px #d94f7b33 }
+  .arrow { width:48px; height:48px; border-radius:50%; color:var(--deep); background:#ffe8ee; font-size:1.45rem }
+  .arrow:disabled { opacity:.3; cursor:not-allowed; transform:none }
+  .progress-wrap { margin:20px auto 0; width:min(420px,85%); }
+  .progress-label { display:flex; justify-content:space-between; color:#a06e7e; font-size:.8rem; margin-bottom:8px }
+  .track { height:5px; background:#f5d5df; border-radius:20px; overflow:hidden }
+  .bar { height:100%; width:0; background:linear-gradient(90deg,#f5a1b8,var(--deep)); transition:width .3s }
+  .tiny { margin-top:22px; color:#bd8295; font-size:.82rem }
+  .hidden { display:none }
+  @media(max-width:480px) { body{padding:14px}.card{min-height:440px;border-radius:24px} }
+  .final-photo {
+  width: min(480px, 94%);
+  max-height: 370px;
+  object-fit: cover;
+  border-radius: 22px;
+  margin: 12px 0 18px;
+  box-shadow: 0 12px 35px #a92e5730;
+}
+
+.final-message {
+  max-width: 520px;
+  line-height: 1.7;
+  color: #805b67;
+  font-size: 1.05rem;
+}
+
+.final-hearts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 30px;
+}
+
+.final-heart {
+  position: absolute;
+  bottom: -40px;
+  color: #e85d83;
+  opacity: .7;
+  animation: finalFloat linear infinite;
+}
+
+@keyframes finalFloat {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: .7;
+  }
+  100% {
+    transform: translateY(-600px) rotate(30deg);
+    opacity: 0;
+  }
+}
+</style>
+</head>
+<body>
+<div class="hearts" aria-hidden="true" id="hearts"></div>
+<main class="shell">
+  <section class="card" id="start">
+    <div class="eyebrow">DLA AMELKI</div>
+    <div class="gift-icon">💝</div>
+    <h1>Siedemnaste urodziny.<br>Siedemnaście prezentów.</h1>
+    <p class="intro">17 prezentów specjalnie dla Ciebie, Amelcia! ❤️</p>
+    <div class="controls"><button class="primary" id="begin">Kliknij by otworzyć prezenty ✨</button></div>
+  </section>
+
+  <section class="card hidden" id="gift" aria-live="polite">
+    <div class="final-hearts" id="finalHearts"></div>
+    <div class="eyebrow" id="counter">prezent 1 z 17</div>
+    <div class="gift-icon" id="icon">🎨</div>
+    <h2 id="title">Rysunek</h2>
+    <p class="description" id="description"></p>
+    <div class="controls">
+      <button class="arrow" id="prev" aria-label="Poprzedni prezent">←</button>
+      <button class="primary" id="next">Następny prezent</button>
+      <button class="arrow" id="nextArrow" aria-label="Następny prezent">→</button>
+    </div>
+<div class="progress-wrap" id="progress-wrap">
+      <div class="progress-label"><span>Nasza podróż</span><span id="progressText">1/17</span></div>
+      <div class="track"><div class="bar" id="bar"></div></div>
+    </div>
+    <button id="home" class="tiny" style="border:0;background:transparent;cursor:pointer">↶ Wróć na początek</button>
+  </section>
+</main>
+<script>
+const gifts = [
+  {name:"Gniotek Hermiony", icon:"🪄", description:"Squishy, squishy!"},
+  {name:"Nalepki Pusheen", icon:"🐱", description:"Meow!"},
+  {name:"Żelki", icon:"🍬", description:"Kwaśne, te, co lubisz!"},
+  {name:"Świeczka", icon:"🕯️", description:"Z napisem „Miłość!”"},
+  {name:"Zaproszenie na Halloween", icon:"🎃", description:"Znacie angielski."},
+  {name:"Długopis", icon:"🖊️", description:"Żebyś myślała o mnie w szkole."},
+  {name:"Życzenia", icon:"💌", description:"Sto lat, cziken!"},
+  {name:"Wiersze", icon:"✍️", description:"17 wierszy o Tobie i naszej relacji. Spędziłem setki godzin nad nimi."},
+  {name:"List miłosny", icon:"💌", description:"Żebyś wiedziała, ile dla mnie znaczysz."},
+  {name:"Płyta CD", icon:"💿", description:"Spodobał Ci się „Petal”, prawda?"},
+  {name:"Kwiaty", icon:"🌷", description:"Żebyś wstawała z uśmiechem na twarzy, patrząc na nie."},
+  {name:"Zaproszenie na Bubble Tea", icon:"🧋", description:"Musimy w końcu iść na tę Bubble Tea!"},
+  {name:"Czekotubki", icon:"🍫", description:"Żebyś nigdy więcej nie poczuła się gruba."},
+  {name:"Bransoletka", icon:"💗", description:"Z serduszkiem!"},
+  {name:"Zaproszenie do kina", icon:"🎬", description:"Film jeszcze się wybierze."},
+  {name:"Perfum", icon:"🌸", description:"Pachniesz przepięknie! Te perfumy pasują do Ciebie idealnie."},
+  {name:"Pluszowy miś", icon:"🧸", description:"Przytul się i wyobraź sobie, że to ja."}
+];
+
+  let current = 0;
+  const start = document.getElementById("start"), gift = document.getElementById("gift");
+  const $ = id => document.getElementById(id);
+  function showGift() {
+    const item = gifts[current];
+    $("counter").textContent = `prezent ${current+1} z ${gifts.length}`;
+    $("icon").textContent = item.icon;
+    $("title").textContent = item.name;
+    $("description").textContent = item.description || "Tutaj pojawi się Twój opis tego prezentu. ❤️";
+    $("prev").disabled = current === 0;
+    $("next").textContent = current === gifts.length-1 ? "Zobacz jeszcze raz ❤️" : "Następny prezent";
+    $("nextArrow").disabled = false;
+    $("progressText").textContent = `${current+1}/${gifts.length}`;
+    $("bar").style.width = `${(current+1)/gifts.length*100}%`;
+  }
+  function openGuide() { start.classList.add("hidden"); gift.classList.remove("hidden"); showGift(); }
+  $("begin").addEventListener("click", openGuide);
+  $("prev").addEventListener("click", () => { if(current>0){current--;showGift();} });
+function showFinal() {
+  $("counter").textContent = "❤️";
+  $("icon").style.display = "none";
+  $("title").textContent = "JA CIEBIE TEŻ";
+
+  $("description").innerHTML = `
+    <img src="https://media.discordapp.net/attachments/1492248326303645698/1556787366075834440/4r52eaea.png?backend=b2&ex=6ac56eb7&is=6ac41d37&hm=c7191e4df51db62095d6c3a11349b367e6ecaae1e442834003311d05bd6165c3&=&format=webp&quality=lossless&width=1536&height=864" class="final-photo" alt="Nasze zdjęcie">
+    <div class="final-message">
+      Mam nadzieję, że te 17 prezentów sprawiło Ci choć trochę radości.<br>
+    </div>
+  `;
+
+  $("prev").style.display = "none";
+  $("next").style.display = "none";
+  $("nextArrow").style.display = "none";
+  $("progress-wrap").style.display = "none";
+
+  createFinalHearts();
+}function createFinalHearts() {
+  const container = $("finalHearts");
+  container.innerHTML = "";
+
+  for (let i = 0; i < 25; i++) {
+    const heart = document.createElement("span");
+
+    heart.className = "final-heart";
+    heart.textContent = Math.random() > 0.5 ? "♥" : "❤";
+
+    heart.style.left = Math.random() * 100 + "%";
+    heart.style.fontSize = (14 + Math.random() * 24) + "px";
+    heart.style.animationDuration = (5 + Math.random() * 7) + "s";
+    heart.style.animationDelay = (-Math.random() * 8) + "s";
+
+    container.appendChild(heart);
+  }
+}
+$("next").addEventListener("click", () => {
+  if (current === gifts.length - 1) {
+    current = 0;
+    showGift();
+  } else {
+    current++;
+    showGift();
+  }
+});
+
+$("nextArrow").addEventListener("click", () => {
+  if (current === gifts.length - 1) {
+    showFinal();
+  } else {
+    current++;
+    showGift();
+  }
+});
+$("home").addEventListener("click", () => {
+  current = 0;
+
+  gift.classList.add("hidden");
+  start.classList.remove("hidden");
+
+  $("icon").style.display = "";
+  $("prev").style.display = "";
+  $("next").style.display = "";
+  $("nextArrow").style.display = "";
+  $("progress-wrap").style.display = "";
+
+  $("finalHearts").innerHTML = "";
+
+  showGift();
+});
+  const hearts = $("hearts");
+  for(let i=0;i<18;i++){
+    const el=document.createElement("span"); el.className="heart"; el.textContent="♥";
+    el.style.left=(Math.random()*100)+"%";
+    el.style.fontSize=(12+Math.random()*22)+"px";
+    el.style.animationDuration=(9+Math.random()*13)+"s";
+    el.style.animationDelay=(-Math.random()*18)+"s";
+    hearts.appendChild(el);
+  }
+</script>
+</body>
+</html>
